@@ -32,6 +32,9 @@ if (!isset($_SESSION['logged']))
           <a class="nav-link" href="enterform.php">Wprowadź lek</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="create_new_form.php">Stwórz nową apteczkę</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="giveform.php">Wydaj lek</a>
         </li>
         <li class="nav-item">

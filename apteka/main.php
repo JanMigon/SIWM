@@ -58,6 +58,21 @@ else
 ?>
 </div>
 
+<div class="row">
+    <div class="col-sm">
+        <p class="text-danger">
+            <?php
+                if(isset($_SESSION['msg']))	{ echo($_SESSION['err']); unset($_SESSION['msg']);}
+            ?>
+        </p>
+        <p class="text-success">
+            <?php
+                if(isset($_SESSION['success_msg']))	{ echo($_SESSION['success_msg']); unset($_SESSION['success_msg']);}
+            ?>
+        </p>
+    </div>
+</div>
+
 <?php
 
 include('foot.html');

@@ -35,3 +35,10 @@ th, td {
     width: auto;
     padding: 1em;
 }
+
+.list-group{
+    max-height: 20px;
+    margin-bottom: 10px;
+    overflow-y:auto
+    -webkit-overflow-scrolling: touch;
+}

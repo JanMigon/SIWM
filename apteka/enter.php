@@ -20,42 +20,58 @@
 	{
         $name = $_POST['name'];
         $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
         $expirationDate = $_POST['expirationDate'];
 
-        $query = "SELECT * FROM medicines WHERE name='$name' AND expDate='$expirationDate'";
-
-		if ($response = @$conn->query($query))
-		{
-            if($response->num_rows>0)
-			{
-				$dbentry = $response->fetch_assoc();
-
-                $quantity += $dbentry['quantity'];
-					
-
-                $query = "UPDATE medicines SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate'";
-                @$conn->query($query);
-                    
-                $_SESSION['msg'] = "Poprawnie dodano do istniejacego";
-
+        $upper_name = strtoupper($name);
+        $conn->begin_transaction();
+        
+        if($result = @$conn->query("SELECT NazwaHandlowa FROM ListaLekow WHERE NazwaHandlowa='$upper_name'"))
+        {
+            if($result->num_rows==0)
+            {
+                $_SESSION['err'] = "Podany lek nie istnieje w słowniku leków";
             }
+        
+
             else
             {
-                $query = "INSERT INTO medicines VALUES (NULL, '$name', '$quantity', '$expirationDate')";
-                @$conn->query($query);	
+                $query = "SELECT * FROM medicines WHERE name='$name' AND expDate='$expirationDate'";
+
+		        if ($response = @$conn->query($query))
+		        {
+                    if($response->num_rows>0)
+			        {
+				        $dbentry = $response->fetch_assoc();
+
+                        $quantity += $dbentry['quantity'];
+					
+
+                        $query = "UPDATE medicines SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate'";
+                        @$conn->query($query);
+                    
+                        $_SESSION['success_msg'] = "Poprawnie dodano do istniejacego";
+
+                    }
+                    else
+                    {
+                        $query = "INSERT INTO medicines VALUES (NULL, '$name', '$quantity', '$price', '$expirationDate')";
+                        @$conn->query($query);	
                         
-                $_SESSION['msg'] = "Poprawnie dodano nowy";
-            }
-            $response->free_result();
-        }
-        else
-        {
-            $_SESSION['msg']= "Blad";
+                        $_SESSION['success_msg'] = "Poprawnie dodano nowy";
+                    }
+                    $response->free_result();
+                }
+                else
+                {
+                    $_SESSION['err']= "Blad";
 
-        }
+                }
+                $conn->commit();
+		        $conn->close();
+	        }
+            header('Location: enterform.php');
+        }    
+    }
 
-		$conn->close();
-	}
-    header('Location: enterform.php');
-	
 ?>
