@@ -36,7 +36,13 @@
 
             else
             {
-                $query = "SELECT * FROM medicines WHERE name='$name' AND expDate='$expirationDate'";
+                
+                $table_name = $_POST['apteczka'];
+                if ($table_name == "")
+                {
+                    $table_name = 'medicines';
+                }
+                $query = "SELECT * FROM $table_name WHERE name='$name' AND expDate='$expirationDate';";
 
 		        if ($response = @$conn->query($query))
 		        {
@@ -47,24 +53,24 @@
                         $quantity += $dbentry['quantity'];
 					
 
-                        $query = "UPDATE medicines SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate'";
+                        $query = "UPDATE $table_name SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate';";
                         @$conn->query($query);
                     
-                        $_SESSION['success_msg'] = "Poprawnie dodano do istniejacego";
+                        $_SESSION['success_msg'] = "Zwiększono lek o ".$quantity." w apteczce ".$table_name;
 
                     }
                     else
                     {
-                        $query = "INSERT INTO medicines VALUES (NULL, '$name', '$quantity', '$price', '$expirationDate')";
+                        $query = "INSERT INTO $table_name VALUES (NULL, '$name', '$quantity', '$price', '$expirationDate');";
                         @$conn->query($query);	
                         
-                        $_SESSION['success_msg'] = "Poprawnie dodano nowy";
+                        $_SESSION['success_msg'] = "Poprawnie dodano nowy lek do apteczki "."$table_name";
                     }
                     $response->free_result();
                 }
                 else
                 {
-                    $_SESSION['err']= "Blad";
+                    $_SESSION['err']= "Błąd";
 
                 }
                 $conn->commit();

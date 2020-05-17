@@ -7,9 +7,9 @@ include('head.php');
 <div class="col-sm">
     <form class="form-signin" action="create_new.php" method="POST">
         <img class="mb-4" src="logo.jpg" alt="" width="72">
-        <h1 class="h3 mb-3 font-weight-normal">Wprowadź nazwę nowej apteczki</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Wprowadź nazwę apteczki</h1>
         <label for="inputName" class="sr-only">Nazwa</label>
-        <input type="text" id="inputName" name="table_name" class="form-control" placeholder="Nazwa tabeli" required>
+        <input type="text" id="inputName" name="tableName" class="form-control" placeholder="Nazwa apteczki" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Zatwierdź</button>
     </form>
 </div>
@@ -28,7 +28,9 @@ include('head.php');
         </p>
     </div>
 </div>
+
 <?php
+
 include('foot.html');
 
 ?>

@@ -2,9 +2,9 @@
 
 	session_start();
 	
-	if ((!isset($_POST['table_name'])))
+	if ((!isset($_POST['tableName'])))
 	{
-		header('Location: create_new.php');
+		header('Location: create_new_form.php');
 		exit();
 	}
 
@@ -18,25 +18,40 @@
 	}
 	else
 	{
-        
+        $conn->autocommit(TRUE);
         $conn->begin_transaction();
-        $new_table_name = _POST['table_name'];
+		$new_table_name = $_POST['tableName'];
+
+		$query = "SELECT * FROM apteczki WHERE name='$new_table_name';";
+
+		    if ($response = @$conn->query($query))
+		    {
+                if($response->num_rows>0)
+			        {
+						$_SESSION['err'] = "Apteczka o tej nazwie juz istnieje";
+					}
+				else
+				{
+					$created_by = $_SESSION['name'];
+					$query = "CREATE TABLE ".$new_table_name." (id int(11) NOT NULL AUTO_INCREMENT, name text COLLATE utf8_polish_ci NOT NULL, quantity int(11) NOT NULL, price int(11) NOT NULL, expDate date NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;";
+					$query .= "INSERT INTO apteczki (name, created_by) VALUES ('$new_table_name', '$created_by');";
+					if ($response = @$conn->multi_query($query))
+					{
+						$_SESSION['success_msg'] = "Apteczka stworzona";
+						$conn->commit();
+        			}
+
+        			else
+        			{
+						$conn->rollback;
+						$_SESSION['err'] = "Niepoprawna nazwa".$query;
+						header('Location: create_new_form.php');
+        			}
+				}
+				$conn->close();
+			}
 		
-		$query = "CREATE TABLE '".$new_table_name."' (id int(11) NOT NULL, name text COLLATE utf8_polish_ci NOT NULL, quantity int(11) NOT NULL, price int(11) NOT NULL, expDate date NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;";
-
-		if ($response = @$conn->query($query))
-		{
-            $_SESSION['success_msg'] = "Utworzono nową apteczkę";
-            $conn->commit();
-        }
-
-        else
-        {
-            $conn->rollback;
-            $_SESSION['err']= "Nazwa nie moze zawierać spacji";
-			header('Location: create_new_form.php');
-        }
-		$conn->close();
+		
 	}
     header('Location: create_new_form.php');
 	
