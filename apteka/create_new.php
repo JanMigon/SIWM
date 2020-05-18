@@ -33,7 +33,7 @@
 				else
 				{
 					$created_by = $_SESSION['name'];
-					$query = "CREATE TABLE ".$new_table_name." (id int(11) NOT NULL AUTO_INCREMENT, name text COLLATE utf8_polish_ci NOT NULL, quantity int(11) NOT NULL, price int(11) NOT NULL, expDate date NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;";
+					$query = "CREATE TABLE ".$new_table_name." (id int(11) PRIMARY KEY AUTO_INCREMENT, name text COLLATE utf8_polish_ci NOT NULL, quantity int(11) NOT NULL, price int(11) NOT NULL, expDate date NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;";
 					$query .= "INSERT INTO apteczki (name, created_by) VALUES ('$new_table_name', '$created_by');";
 					if ($response = @$conn->multi_query($query))
 					{

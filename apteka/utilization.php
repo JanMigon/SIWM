@@ -19,10 +19,18 @@
 	}
 	else
 	{
-        $query = "DELETE FROM medicines WHERE UNIX_TIMESTAMP() > UNIX_TIMESTAMP(expDate)";
+		$query = "SELECT * FROM apteczki ORDER BY date ASC;";
+    	if ($result = @$conn->query($query))
+    	{
+        	while($apteczka = $result->fetch_assoc())
+        	{
+            	$table_name = $apteczka['name'];
+		
+				$query = "DELETE FROM {$table_name} WHERE UNIX_TIMESTAMP() > UNIX_TIMESTAMP(expDate)";
 
-		@$conn->query($query);
-
+				@$conn->query($query);
+			}
+		}
 		$conn->commit();
 		$conn->close();
     }

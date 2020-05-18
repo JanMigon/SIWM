@@ -14,6 +14,7 @@ include('head.php');
     </form>
 </div>
 </div>
+
 <div class="row">
     <div class="col-sm">
         <p class="text-danger">

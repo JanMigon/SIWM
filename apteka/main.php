@@ -3,8 +3,6 @@
 include('head.php');
 ?>
 
-<div class="col-sm">
-
 <?php
 
 require_once "connect.php";
@@ -18,45 +16,58 @@ if ($conn->connect_errno!=0)
 else
 {
     $conn->begin_transaction();
-    $query = "SELECT * FROM medicines WHERE quantity>0";
-
+    $query = "SELECT * FROM apteczki ORDER BY date ASC;";
     if ($result = @$conn->query($query))
     {
-        if($result->num_rows>0)
+        echo('<div class="container">');
+        while($apteczka = $result->fetch_assoc())
         {
-            echo('<table><td>Nazwa</td><td>Ilość</td><td>Data ważności</td><tr>');
+            $table_name = $apteczka['name'];
+            $created_at = $apteczka['date'];
+            $created_by = $apteczka['created_by'];
+            echo('<p>Apteczka "'.$table_name.'" stworzona '.$created_at.' przez '.$created_by.'</p>');
+            echo('<table class="table">');
+            echo('<thead><tr><th scope="col">Nr</th><th scope="col">Nazwa</th><th scope="col">Ilość</th><th scope="col">Data wazności</th></tr></thead>');
+            echo('<tbody>');   
+            $query = "SELECT * FROM {$table_name} WHERE quantity>0";
+            if ($response = @$conn->query($query))
+            {
+                if($response->num_rows>0)
+                {
+                    $cnt = 1;
+                    while($dbentry = $response->fetch_assoc())
+                    {
+                        $name = $dbentry['name'];
+                        $quantity = $dbentry['quantity'];
+                        $expDate = $dbentry['expDate'];	
+                        echo('<tr><th scope="row">'.$cnt.'</th>');
+                        echo("<td>{$name}</td><td>{$quantity}</td>");
+
+                        if(strtotime($dbentry['expDate']) >= getdate()['0'])
+                        {
+                            echo('<td>'.$expDate.'</td>');
+                        }
+                        else
+                        {
+                            echo('<td class="text-danger">'.$expDate.'</td>');
+                        }
+                        echo('</tr>');
+                        $cnt++;
+                    }
+                }
             
-            while($dbentry = $result->fetch_assoc()) 
-            {                
-                $name = $dbentry['name'];
-                $quantity = $dbentry['quantity'];
-                $expDate = $dbentry['expDate'];	
-                        
-                echo("<td width='50' align='center'> {$name} </td><td width='100' align='center'>  {$quantity} </td>");
-
-                if(strtotime($dbentry['expDate']) >= getdate()['0'])
-                {
-                   echo('<td width="100" align="center">'.$expDate.'</td>');
-                }
-                else
-                {
-                    echo('<td width="100" align="center" class="text-danger">'.$expDate.'</td>');
-                }
-                echo ('
-                </tr>
-                <tr>
-                ');
             }
-
+            echo('</tbody>');
             echo('</table>');
+            echo('<br>');
         }
+        echo('</div>');
         $conn->commit();
 		$conn->close();
-    }
-}	
-
+    }   
+}   
+    
 ?>
-</div>
 
 <div class="row">
     <div class="col-sm">

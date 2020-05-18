@@ -20,9 +20,9 @@
 	{
         $name = $_POST['name'];
         $quantity = $_POST['quantity'];
-
+        $table_name = $_POST['apteczka'];
         $conn->begin_transaction();
-        $query = "SELECT * FROM medicines WHERE name='$name' ORDER BY expDate ASC";
+        $query = "SELECT * FROM {$table_name} WHERE name='$name' ORDER BY expDate ASC";
 
 		if ($response = @$conn->query($query))
 		{
@@ -40,7 +40,7 @@
                         {
                             $quantity = $dbentry['quantity'] - $quantity;
                             $expirationDate = $dbentry['expDate'];
-                            $query = "UPDATE medicines SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate'";
+                            $query = "UPDATE {$table_name} SET quantity='$quantity' WHERE name='$name' AND expDate='$expirationDate'";
                             @$conn->query($query);
                             $flag = true;
                             break;
@@ -48,12 +48,12 @@
                     }
                 }
 
-                if($flag) $_SESSION['msg'] = "Wydano lek";
-                else $_SESSION['msg'] = "Nie ma leku";
+                if($flag) $_SESSION['success_msg'] = "Wydano lek";
+                else $_SESSION['err'] = "Nie ma takiej ilości leku";
             }
             else
             {
-                $_SESSION['msg'] = "Brak leku";
+                $_SESSION['err'] = "Brak leku";
             }
             $response->free_result();
         }
