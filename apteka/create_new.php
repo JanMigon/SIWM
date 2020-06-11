@@ -44,7 +44,7 @@
         			else
         			{
 						$conn->rollback;
-						$_SESSION['err'] = "Niepoprawna nazwa".$query;
+						$_SESSION['err'] = "Niepoprawna nazwa. Usuń spacje";
 						header('Location: create_new_form.php');
         			}
 				}
